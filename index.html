@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro con Batería</title>
+    <link rel="stylesheet" media="all" href="style.css" />
+
+</head>
+<body>
+    <h1>Pomodoro con Batería</h1>
+    <div class="battery" id="battery">
+        <div class="bar" id="bar1"></div>
+        <div class="bar" id="bar2"></div>
+        <div class="bar" id="bar3"></div>
+        <div class="bar" id="bar4"></div>
+        <div class="bar" id="bar5"></div>
+    </div>
+    <div class="timer" id="timer">25:00</div>
+    <div>
+        <div class="btn from-top" onclick="startPomodoro()"> Iniciar</div>
+        <div class="btn from-top" onclick="pausePomodoro()"> Pausa</div>
+        <div class="btn from-top" onclick="resetPomodoro()"> Reiniciar</div>
+    </div>
+
+<script type="text/javascript">
+    let totalMinutes = 25;
+        let currentTime = totalMinutes * 60;
+        let interval;
+        let isPaused = false;
+
+        const timerElement = document.getElementById('timer');
+        const batteryBars = document.querySelectorAll('.bar');
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(currentTime / 60).toString().padStart(2, '0');
+            const seconds = (currentTime % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+
+        function updateBattery() {
+            const barsToShow = Math.ceil((currentTime / (totalMinutes * 60)) * 5);
+            batteryBars.forEach((bar, index) => {
+                if (index < barsToShow) {
+                    bar.classList.remove('hidden');
+                } else {
+                    bar.classList.add('hidden');
+                }
+            });
+        }
+
+        function startPomodoro() {
+            if (interval) return; // Evita múltiples intervalos
+
+            interval = setInterval(() => {
+                if (!isPaused) {
+                    if (currentTime > 0) {
+                        currentTime--;
+                        updateTimerDisplay();
+                        updateBattery();
+                    } else {
+                        clearInterval(interval);
+                        interval = null;
+                        alert('¡Tiempo terminado!');
+                    }
+                }
+            }, 1000);
+        }
+
+        function pausePomodoro() {
+            isPaused = !isPaused;
+        }
+
+        function resetPomodoro() {
+            clearInterval(interval);
+            interval = null;
+            currentTime = totalMinutes * 60;
+            isPaused = false;
+            updateTimerDisplay();
+            updateBattery();
+        }
+
+        updateTimerDisplay();
+        updateBattery();
+</script>
+
+    
+</body>
+</html>
